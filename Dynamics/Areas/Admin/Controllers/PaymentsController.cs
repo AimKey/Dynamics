@@ -40,7 +40,7 @@ namespace Dynamics.Areas.Admin.Controllers
                 {
                     var viewWithdraw = await _adminRepository.ReviewWithdraw(w => true);
 
-                    var withdraw = viewWithdraw.Where(r => r.Project.ProjectResource.FirstOrDefault().ResourceName == "Money");
+                    var withdraw = viewWithdraw.Where(r => r.Project.ProjectResource.FirstOrDefault().ResourceName == "Money").ToList();
                     var transactionBases = withdraw
                         .Select(r => new TransactionBase
                         {
