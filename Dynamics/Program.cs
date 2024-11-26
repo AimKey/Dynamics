@@ -4,15 +4,12 @@ using Dynamics.Models.Models;
 using Dynamics.Services;
 using Dynamics.Utility;
 using Dynamics.Utility.Mapper;
-using Google.Apis.Util;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Resources;
 using Serilog;
-using Cloudinary = CloudinaryDotNet.Cloudinary;
 
 
 namespace Dynamics
@@ -50,7 +47,7 @@ namespace Dynamics
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             }, ServiceLifetime.Transient);
-            
+
             // Identity and roles
             builder.Services
                 .AddIdentity<User, IdentityRole<Guid>>(options =>
@@ -88,7 +85,7 @@ namespace Dynamics
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole(RoleConstants.Admin));
             });
-            
+
             // Repos here
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
@@ -176,6 +173,7 @@ namespace Dynamics
             builder.Logging.AddSerilog(logger); // This one make it so that ASP will use it
 
             var app = builder.Build();
+
             // Redirect user to 404 page if not found
             app.Use(async (ctx, next) =>
             {
