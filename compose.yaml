@@ -1,0 +1,98 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  server:
+    container_name: Dynamics_Server
+    # build:
+    #   context: .
+    #   target: final
+    # This will make it so that the development stage in dockerfile will be targeted instead of final one
+    build:
+      context: .
+      target: development
+    ports:
+      - 7276:8080
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: Dynamics_DB
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Minhkiet24@
+      - MSSQL_PID=Developer
+    user: root
+    ports:
+      # Try not to make this conflict with the one on your pc
+      - 1434:1434
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Minhkiet24@ -C -Q 'SELECT 1' || exit 1" ]
+      interval: 10s
+      retries: 3
+      start_period: 10s
+      timeout: 3s
+
+  sqlserver.configurator:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: Dynamics_DB_Config
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    # Use the -C to avoid certificates issue
+    command: >
+      bash -c ' /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P Minhkiet24@ -C -d master -i docker-entrypoint-initdb.d/init.sql; echo "All done!"; '
+
+volumes:
+  sqlserver_data:
+
+    # The commented out section below is an example of how to define a PostgreSQL
+    # database that your application can use. `depends_on` tells Docker Compose to
+    # start the database before your application. The `db-data` volume persists the
+    # database data between container restarts. The `db-password` secret is used
+    # to set the database password. You must create `db/password.txt` and add
+    # a password of your choosing to it before running `docker compose up`.
+    #     depends_on:
+    #       db:
+    #         condition: service_healthy
+    #   db:
+    #     image: postgres
+    #     restart: always
+    #     user: postgres
+    #     secrets:
+    #       - db-password
+    #     volumes:
+    #       - db-data:/var/lib/postgresql/data
+    #     environment:
+    #       - POSTGRES_DB=example
+    #       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    #     expose:
+    #       - 5432
+    #     healthcheck:
+    #       test: [ "CMD", "pg_isready" ]
+    #       interval: 10s
+    #       timeout: 5s
+    #       retries: 5
+    # volumes:
+    #   db-data:
+    # secrets:
+    #   db-password:
+    #     file: db/password.txt
+

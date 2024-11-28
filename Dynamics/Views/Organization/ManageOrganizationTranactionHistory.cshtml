@@ -39,11 +39,11 @@
                     <select class="h-8 text-xs border border-gray-300 join-item bg-white" asp-for="@Model.UserSearchRequestDto.Filter">
                         @{
                             // Check if user already has filter before
-                            bool isFilteredBefore = !string.IsNullOrEmpty(Model.UserSearchRequestDto.Filter);
+                            bool isFilteredBefore1 = !string.IsNullOrEmpty(Model.UserSearchRequestDto.Filter);
                             foreach (var filterOptions in Model.FilterOptions)
                             {
                                 // If a filter exist, select that filter automatically
-                                if (isFilteredBefore && filterOptions.Value.Equals(Model.UserSearchRequestDto.Filter, StringComparison.OrdinalIgnoreCase))
+                                if (isFilteredBefore1 && filterOptions.Value.Equals(Model.UserSearchRequestDto.Filter, StringComparison.OrdinalIgnoreCase))
                                 {
                                     <option value="@filterOptions.Value" selected>@filterOptions.Key</option>
                                 }
@@ -285,11 +285,11 @@
                     <select class="h-8 text-xs border border-gray-300 join-item bg-white" asp-for="@Model.OrganizationSearchRequestDto.Filter">
                         @{
                             // Check if user already has filter before
-                            bool isFilteredBefore = !string.IsNullOrEmpty(Model.OrganizationSearchRequestDto.Filter);
+                            bool isFilteredBefore2 = !string.IsNullOrEmpty(Model.OrganizationSearchRequestDto.Filter);
                             foreach (var filterOptions in Model.FilterOptions)
                             {
                                 // If a filter exist, select that filter automatically
-                                if (isFilteredBefore && filterOptions.Value.Equals(Model.OrganizationSearchRequestDto.Filter, StringComparison.OrdinalIgnoreCase))
+                                if (isFilteredBefore2 && filterOptions.Value.Equals(Model.OrganizationSearchRequestDto.Filter, StringComparison.OrdinalIgnoreCase))
                                 {
                                     <option value="@filterOptions.Value" selected>@filterOptions.Key</option>
                                 }

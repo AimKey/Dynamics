@@ -187,6 +187,19 @@ namespace Dynamics
                 }
             });
 
+            // Redirect user to 500 page if server is in error
+            app.Use(async (ctx, next) =>
+            {
+                await next();
+
+                if (ctx.Response.StatusCode == 500 && !ctx.Response.HasStarted)
+                {
+                    // Re-execute the request so the user gets the error page
+                    ctx.Request.Path = "/error/ServerError";
+                    await next();
+                }
+            });
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -216,6 +229,9 @@ namespace Dynamics
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+
+            // Seed data
+            InitDb.SeedDataAsync(app.Services);
             app.Run();
         }
     }

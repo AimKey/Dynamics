@@ -75,19 +75,19 @@ namespace Dynamics.DataAccess
                 .HasMany(w => w.Withdraw)
                 .WithOne(p => p.Project)
                 .HasForeignKey(w => w.ProjectID);
-            
+
             // Wallet to user: Each wallet belong to a user
             modelBuilder.Entity<Wallet>()
                 .HasOne(w => w.User)
                 .WithOne(u => u.Wallet)
                 .HasForeignKey<Wallet>(w => w.UserId);
-            
+
             // Wallet to UserWalletTransaction: Each wallet has multiple transaction
             modelBuilder.Entity<Wallet>()
                 .HasMany(w => w.WalletTransactions)
                 .WithOne(w => w.Wallet)
                 .HasForeignKey(uwt => uwt.WalletId);
-            
+
             // Report to User: one user can have many reports
             modelBuilder.Entity<Report>()
                 .HasOne(r => r.Reporter)
